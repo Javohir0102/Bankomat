@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Bankomat
 {
-    internal class V1Logger : ILogger
+    internal class V2Logger : ILogger
     {
         public void LogInformation(string message)
         {
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine(message);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Version 2 => {message}");
         }
     }
 }

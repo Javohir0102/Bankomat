@@ -6,7 +6,7 @@ namespace Bankomat
     {
         private Card EmvCard { get; set; }
         private decimal Money { get; set; }
-        private V1Logger LogHelper { get; set; }
+        private ILogger logHelper;
         public AtmService()
         {
             Initialize();
@@ -14,13 +14,13 @@ namespace Bankomat
 
         private void Initialize()
         {
-            LogHelper = new V1Logger();
+            logHelper = new V2Logger();
             Card card = new Card();
             card.Balance = 2000000;
             card.IsSmsOn = false;
             EmvCard = card;
             string selection;
-            LogHelper.LogInformation("Welcome to ATM");
+            logHelper.LogInformation("Welcome to ATM");
             do
             {
                 ShowMenu();
@@ -35,16 +35,16 @@ namespace Bankomat
             var isValidNumber = false;
             do
             {
-                LogHelper.LogInformation("1. Balance");
-                Console.WriteLine("2. SMS ON/OFF");
-                Console.WriteLine("3. WITHDRAW");
+                logHelper.LogInformation("1. Balance");
+                logHelper.LogInformation("2. SMS ON/OFF");
+                logHelper.LogInformation("3. WITHDRAW");
 
                 isValidNumber = int.TryParse(Console.ReadLine(), out inputNum);
 
                 if (!isValidNumber || inputNum < 1 || inputNum > 3)
                 {
                     isValidNumber = false;
-                    LogHelper.LogInformation("Try again, please");
+                    logHelper.LogInformation("Try again, please");
                 }
             } while (!isValidNumber);
 
@@ -58,8 +58,8 @@ namespace Bankomat
 
         private void ShowBalanceMenu()
         {
-            LogHelper.LogInformation("1. On display");
-            LogHelper.LogInformation("2. Print receipt");
+            logHelper.LogInformation("1. On display");
+            logHelper.LogInformation("2. Print receipt");
 
             var inputNumber = int.Parse(Console.ReadLine()!);
             if (inputNumber == 1)
@@ -70,23 +70,23 @@ namespace Bankomat
 
         private void ShowBalanceToDisplay()
         {
-            LogHelper.LogInformation($"Displayed to Monitor");
-            LogHelper.LogInformation($"Your balance: {EmvCard.Balance} so'm");
+            logHelper.LogInformation($"Displayed to Monitor");
+            logHelper.LogInformation($"Your balance: {EmvCard.Balance} so'm");
         }
 
         private void ShowBalanceToReceipt()
         {
-            LogHelper.LogInformation("***************************************");
-            LogHelper.LogInformation($"DateTime: {DateTime.Now}");
-            LogHelper.LogInformation($"Your balance: {EmvCard.Balance} so'm");
-            LogHelper.LogInformation($"SMS on/off: {(EmvCard.IsSmsOn ? "ON" : "OFF")}");
-            LogHelper.LogInformation("***************************************");
+            logHelper.LogInformation("***************************************");
+            logHelper.LogInformation($"DateTime: {DateTime.Now}");
+            logHelper.LogInformation($"Your balance: {EmvCard.Balance} so'm");
+            logHelper.LogInformation($"SMS on/off: {(EmvCard.IsSmsOn ? "ON" : "OFF")}");
+            logHelper.LogInformation("***************************************");
         }
 
         private void ShowSmsMenu()
         {
-            LogHelper.LogInformation("1. Turn on message");
-            LogHelper.LogInformation("2. Turn off message");
+            logHelper.LogInformation("1. Turn on message");
+            logHelper.LogInformation("2. Turn off message");
 
             var inputNumber = int.Parse(Console.ReadLine()!);
             if (inputNumber == 1)
@@ -103,7 +103,7 @@ namespace Bankomat
             {
                 EmvCard.IsSmsOn = true;
                 EmvCard.Phone = phone;
-                LogHelper.LogInformation("Phone is successfully added!");
+                logHelper.LogInformation("Phone is successfully added!");
             }
         }
 
@@ -111,14 +111,14 @@ namespace Bankomat
         {
             EmvCard.IsSmsOn = false;
             EmvCard.Phone = "";
-            LogHelper.LogInformation("Phone is successfully deleted!");
+            logHelper.LogInformation("Phone is successfully deleted!");
         }
 
         private void ShowWithDrawMenu()
         {
-            LogHelper.LogInformation("1. 100 000 sum");
-            LogHelper.LogInformation("2. 200 000 sum");
-            LogHelper.LogInformation("3. Other sum");
+            logHelper.LogInformation("1. 100 000 sum");
+            logHelper.LogInformation("2. 200 000 sum");
+            logHelper.LogInformation("3. Other sum");
 
             var yourChoice = int.Parse(Console.ReadLine()!);
             if (yourChoice == 1)
@@ -143,8 +143,8 @@ namespace Bankomat
                 return;
             }
             EmvCard.Balance -= Money;
-            LogHelper.LogInformation("WithDrawed 100000 so'm");
-            LogHelper.LogInformation($"Current balance: {EmvCard.Balance}");
+            logHelper.LogInformation("WithDrawed 100000 so'm");
+            logHelper.LogInformation($"Current balance: {EmvCard.Balance}");
         }
 
         private void WithDraw200000()
@@ -155,8 +155,8 @@ namespace Bankomat
                 return;
             }
             EmvCard.Balance -= Money;
-            LogHelper.LogInformation("WithDrawed 200000 so'm");
-            LogHelper.LogInformation($"Current balance: {EmvCard.Balance}");
+            logHelper.LogInformation("WithDrawed 200000 so'm");
+            logHelper.LogInformation($"Current balance: {EmvCard.Balance}");
         }
 
         private void WithDrawYourChoice()
@@ -169,8 +169,8 @@ namespace Bankomat
                 return;
             }
             EmvCard.Balance -= Money;
-            LogHelper.LogInformation($"Withdrawed {Money} so'm");
-            LogHelper.LogInformation($"Current balance: {EmvCard.Balance}");
+            logHelper.LogInformation($"Withdrawed {Money} so'm");
+            logHelper.LogInformation($"Current balance: {EmvCard.Balance}");
 
         }
 
@@ -183,7 +183,7 @@ namespace Bankomat
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                LogHelper.LogInformation($"Current balance is: {EmvCard.Balance} so'm. Your balance is not enough!");
+                logHelper.LogInformation($"Current balance is: {EmvCard.Balance} so'm. Your balance is not enough!");
                 Console.ForegroundColor = ConsoleColor.White;
                 ShowMenu();
                 return false;
